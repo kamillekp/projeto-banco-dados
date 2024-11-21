@@ -21,3 +21,8 @@ Os dados estão organizados em coleções no MongoDB:
 <li> <b>PyMongo:</b> Biblioteca que facilita a integração entre Python e MongoDB.</li>
 <li> <b>Tkinter:</b> Biblioteca padrão para criação de interfaces gráficas em Python, permitindo uma experiência visual simples e funcional.</li>
 </ul>
+
+## Acrescentando a fonte
+<p align="justify">
+A fonte usada no projeto está junto do pacote, basta pegá-las e acrescentá-las à pasta "Fontes" do Painel de Controles.
+</p>
