@@ -1,6 +1,19 @@
 import tkinter as tk 
 from tkinter import ttk
 
+def troca_tela_secundaria():
+    root.withdraw()
+    new_window = tk.Toplevel(root)
+    new_window.title("Resultados da pesquisa")
+    label = tk.Label(new_window, text="Você está na nova tela!")
+    back_button = tk.Button(new_window, text="Voltar", command=lambda: voltar_tela_principal(new_window))
+    back_button.pack()
+
+def voltar_tela_principal(window):
+    window.withdraw()
+    root.deiconify()
+
+
 # CORES
 cor_background = "#A7C5BD"
 cor_background_meio = "#F7F0E1"
@@ -49,12 +62,14 @@ input2 = tk.Entry(root, width=55, bg=cor_botoes_inputs, highlightbackground=cor_
 
 # COMBOBOXES CENTRO
 opcoes_dropdown = ["Opção 1", "Opção 2", "Opção 3", "Opção 4", "Opção 5", "Opção 6", "Opção 7", "Opção 8", "Opção 9", "Opção 10", "Opção 11", "Opção 12", "Opção 13", "Opção 14", "Opção 15", "Opção 16", "Opção 17", "Opção 18", "Opção 19", "Opção 20", "Opção 21", "Opção 22", "Opção 23", "Opção 24", "Opção 25", "Opção 26", "Opção 27", "Opção 28", "Opção 29", "Opção 30", "Opção 31", "Opção 32", "Opção 33", "Opção 34", "Opção 35", "Opção 36", "Opção 37", "Opção 38", "Opção 39", "Opção 40", "Opção 41", "Opção 42", "Opção 43", "Opção 44", "Opção 45", "Opção 46", "Opção 47", "Opção 48", "Opção 49", "Opção 50", "Opção 51", "Opção 52", "Opção 53", "Opção 54", "Opção 55", "Opção 56", "Opção 57", "Opção 58", "Opção 59", "Opção 60", "Opção 61", "Opção 62", "Opção 63", "Opção 64", "Opção 65", "Opção 66", "Opção 67", "Opção 68", "Opção 69", "Opção 70", "Opção 71", "Opção 72", "Opção 73", "Opção 74", "Opção 75", "Opção 76", "Opção 77", "Opção 78", "Opção 79", "Opção 80", "Opção 81", "Opção 82", "Opção 83", "Opção 84", "Opção 85", "Opção 86", "Opção 87", "Opção 88", "Opção 89", "Opção 90", "Opção 91", "Opção 92", "Opção 93"]
-combobox1 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=220)
-combobox2 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=260)
-combobox3 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=300)
-combobox4 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=340)
-combobox5 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=380)
-combobox6 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=15, width=52).place(x=300, y=420)
+combobox1 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=220)
+combobox2 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=260)
+combobox3 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=300)
+combobox4 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=340)
+combobox5 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=380)
+combobox6 = ttk.Combobox(root, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=420)
 
+
+tk.Button(root, text="pesquisar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=troca_tela_secundaria).place(x=180, y=650)
 
 root.mainloop()
