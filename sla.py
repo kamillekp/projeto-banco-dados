@@ -1,33 +1,25 @@
 import tkinter as tk
+import requests
 
-def nova_tela():
-    # Esconde o conteúdo atual
-    label.pack_forget()
-    button.pack_forget()
+def fetch_data():
+    try:
+        response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+        if response.status_code == 200:
+            data = response.json()
+            label_result["text"] = f"Título: {data['title']}"
+        else:
+            label_result["text"] = "Erro ao buscar dados"
+    except Exception as e:
+        label_result["text"] = f"Erro: {str(e)}"
 
-    # Cria novos widgets para a "nova tela"
-    nova_label = tk.Label(root, text="Esta é a nova tela!")
-    nova_label.pack()
-
-    nova_button = tk.Button(root, text="Voltar", command=voltar)
-    nova_button.pack()
-
-def voltar():
-    # Esconde os novos widgets
-    nova_label.pack_forget()
-    nova_button.pack_forget()
-
-    # Volta para o conteúdo original
-    label.pack()
-    button.pack()
-
+# Interface Tkinter
 root = tk.Tk()
+root.title("Consumindo API")
 
-# Conteúdo inicial
-label = tk.Label(root, text="Bem-vindo à tela inicial!")
-label.pack()
+btn_fetch = tk.Button(root, text="Buscar Dados", command=fetch_data)
+btn_fetch.pack(pady=10)
 
-button = tk.Button(root, text="Ir para a nova tela", command=nova_tela)
-button.pack()
+label_result = tk.Label(root, text="")
+label_result.pack(pady=10)
 
 root.mainloop()
