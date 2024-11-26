@@ -1,15 +1,21 @@
 import pandas as pd
 from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
 
-# Conexão com o MongoDB
-client = MongoClient("URI")  #TODO: COLOCAR URL REMOTA
-db = client["candidatos"]  # Nome do banco de dados
-collection = db["candidatos_2024"]  # Nome da coleção
+load_dotenv()
+
+mongo_uri = os.getenv("MONGO_URI")
+
+client = MongoClient(mongo_uri)  
+db = client["candidatos"] 
+collection = db["candidatos_2024"]  
 
 # Carregar o arquivo CSV
 caminho_csv = "/consulta_cand_2024/consulta_cand_2024_BRASIL_limpo.csv"
 df = pd.read_csv(caminho_csv)
 
+# Converter os dados para um formato dicionário
 dados = df.to_dict(orient="records")
 
 # Inserir os dados no MongoDB

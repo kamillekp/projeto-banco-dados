@@ -1,6 +1,5 @@
 import tkinter as tk 
 from tkinter import ttk
-import requests
 
 def tela_principal():
     frame2.pack_forget()
