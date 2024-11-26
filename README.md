@@ -26,3 +26,11 @@ Os dados estão organizados em coleções no MongoDB:
 <p align="justify">
 A fonte usada no projeto está junto do pacote, basta pegá-las e acrescentá-las à pasta "Fontes" do Painel de Controles.
 </p>
+
+## Dependências
+- Python 3.x com suporte ao Tkinter
+- Instale as bibliotecas adicionais com:
+  ```
+  pip install -r requirements.txt
+  ```
+
