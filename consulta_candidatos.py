@@ -13,31 +13,28 @@ db = client["candidatos"]
 politico_collection = db["politicos"]
 
 def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None):
-    # Inicializando a lista de resultados
     politicos_encontrados = []  
     
-    # Percorrer todos os documentos no banco de dados
-    for politico in politico_collection.find({}, {"_id": 0}):  # Removendo o _id dos resultados
-        # Aplicando os filtros manualmente
-        if nome and nome.lower() not in politico["nome"].lower():
-            continue  # Ignorar se o nome não corresponder
+    for politico in politico_collection.find({}, {"_id": 0}):
+        if nome and not politico["nome"].lower().startswith(nome.lower()):
+            continue
 
         if idade:
             ano_nascimento = _calcular_ano_nascimento(idade)
             if not (ano_nascimento <= politico["nascimento"].year < ano_nascimento + 1):
-                continue  # Ignorar se a idade não corresponder
+                continue
 
         if raca and raca.lower() not in politico["raca"].lower():
-            continue  # Ignorar se a raça não corresponder
+            continue
 
         if genero and genero.lower() not in politico["genero"].lower():
-            continue  # Ignorar se o gênero não corresponder
+            continue
 
         if ocupacao and ocupacao.lower() not in politico["ocupacao"].lower():
-            continue  # Ignorar se a ocupação não corresponder
+            continue
 
         if candidatura and candidatura.lower() not in politico["cargo"].lower():
-            continue  # Ignorar se o cargo não corresponder
+            continue 
 
         # Se todos os filtros forem atendidos, adicionar o documento completo à lista de resultados
         politicos_encontrados.append(politico)
@@ -52,16 +49,19 @@ def _calcular_ano_nascimento(idade):
 # Supondo que o banco de dados esteja configurado corretamente
 
 # # Teste com nome
-# resultados = consultar_candidatos(nome="nelson pernomian")
-# print(resultados)  # Espera-se que retorne todos os dados de "Maria Silva"
+# print("################ TESTE COM NOME ############ ")
+# resultados = consultar_candidatos(nome="nelson ")
+# print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
 
-# Teste com idade
-resultados = consultar_candidatos(idade=39, genero="masculino")
-print(resultados)  # Espera-se que retorne candidatos com idade aproximada de 39 anos
+# # Teste com idade
+# print("\n\n\n################ TESTE COM NOME + IDADE ############ ")
+# resultados = consultar_candidatos(nome="nelson ", idade=59)
+# print(resultados)  # Espera-se que retorne candidatos com idade aproximada de 39 anos
 
 # # Teste com raça
-# resultados = consultar_candidatos(raca="Negra")
-# print(resultados)  # Espera-se que retorne candidatos com raça "Negra"
+# print("\n\n\n################ TESTE COM NOME + RACA ############ ")
+# resultados = consultar_candidatos(nome ="nelson felix", raca="Preta")
+# print(resultados)  # Espera-se que retorne candidatos com raça "Preta"
 
 # # Teste com gênero
 # resultados = consultar_candidatos(genero="Feminino")
