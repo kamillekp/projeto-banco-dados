@@ -53,7 +53,7 @@ canvas.create_rectangle(largura_retangulo, 100, 100, 0, fill=cor_background_titu
 canvas.create_text(400, 50, text="POLÍTICA TRANSPARENTE", font=("Lexend Peta Light", 20), fill=cor_texto)
 
 # TEXTO CENTRO
-opcoes_texto = ["Nome:", "Idade:", "Raça:", "Gênero:", "Ocupação:", "Estado:", "Partido:", "Coligação:"]
+opcoes_texto = ["Nome:", "Idade:", "Raça:", "Gênero:", "Estado:", "Partido:", "Coligação:"]
 variaveis = [tk.IntVar() for _ in opcoes_texto]
 for i, opcao in enumerate(opcoes_texto):
     canvas.create_text(170, 150 + i * 40, text=opcao, font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
@@ -62,7 +62,6 @@ for i, opcao in enumerate(opcoes_texto):
 input1 = tk.Entry(frame1, width=55, bg=cor_botoes_inputs, highlightbackground=cor_setas_bordas, highlightthickness=0.2).place(x=300, y=145)
 input2 = tk.Entry(frame1, width=55, bg=cor_botoes_inputs, highlightbackground=cor_setas_bordas, highlightthickness=0.2).place(x=300, y=185)
 
-
 # COMBOBOXES CENTRO
 opcoes_dropdown = ["Opção 1", "Opção 2", "Opção 3", "Opção 4", "Opção 5", "Opção 6", "Opção 7", "Opção 8", "Opção 9", "Opção 10", "Opção 11", "Opção 12", "Opção 13", "Opção 14", "Opção 15", "Opção 16", "Opção 17", "Opção 18", "Opção 19", "Opção 20", "Opção 21", "Opção 22", "Opção 23", "Opção 24", "Opção 25", "Opção 26", "Opção 27", "Opção 28", "Opção 29", "Opção 30", "Opção 31", "Opção 32", "Opção 33", "Opção 34", "Opção 35", "Opção 36", "Opção 37", "Opção 38", "Opção 39", "Opção 40", "Opção 41", "Opção 42", "Opção 43", "Opção 44", "Opção 45", "Opção 46", "Opção 47", "Opção 48", "Opção 49", "Opção 50", "Opção 51", "Opção 52", "Opção 53", "Opção 54", "Opção 55", "Opção 56", "Opção 57", "Opção 58", "Opção 59", "Opção 60", "Opção 61", "Opção 62", "Opção 63", "Opção 64", "Opção 65", "Opção 66", "Opção 67", "Opção 68", "Opção 69", "Opção 70", "Opção 71", "Opção 72", "Opção 73", "Opção 74", "Opção 75", "Opção 76", "Opção 77", "Opção 78", "Opção 79", "Opção 80", "Opção 81", "Opção 82", "Opção 83", "Opção 84", "Opção 85", "Opção 86", "Opção 87", "Opção 88", "Opção 89", "Opção 90", "Opção 91", "Opção 92", "Opção 93"]
 combobox1 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=220)
@@ -70,7 +69,6 @@ combobox2 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", heigh
 combobox3 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=300)
 combobox4 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=340)
 combobox5 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=380)
-combobox6 = ttk.Combobox(frame1, values=opcoes_dropdown, state="readonly", height=10, width=52).place(x=300, y=420)
 
 
 tk.Button(frame1, text="pesquisar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=tela_secundaria).place(x=180, y=650)
