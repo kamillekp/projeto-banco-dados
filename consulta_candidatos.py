@@ -62,6 +62,43 @@ def _calcular_ano_nascimento(idade):
     return ano_nascimento
 
 
+def porcentagem_candidaturas_por_instrucao(politicos):
+    total_candidatos = len(politicos)
+    instrucoes = {}
+
+    for politico in politicos:
+        instrucao = politico["instrucao"].lower()
+        if instrucao not in instrucoes:
+            instrucoes[instrucao] = 0
+        instrucoes[instrucao] += 1
+
+    instrucoes_percentual = {instrucao: (quantidade / total_candidatos) * 100 for instrucao, quantidade in instrucoes.items()}
+    return instrucoes_percentual
+
+
+def quantidade_candidaturas_por_partido():
+    partidos = {}
+    
+    for politico in politico_collection.find({}, {"_id": 0}):
+        partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
+        partido_nome = partido.get("nome", "Desconhecido") if partido else "Desconhecido"
+        
+        if partido_nome not in partidos:
+            partidos[partido_nome] = 0
+        partidos[partido_nome] += 1
+
+    return partidos
+
+def porcentagem_mulheres_candidatas(politicos):
+    total_candidatos = len(politicos)
+    mulheres = sum(1 for politico in politicos if politico["genero"].lower() == "feminino")
+    porcentagem_mulheres = (mulheres / total_candidatos) * 100 if total_candidatos > 0 else 0
+    return porcentagem_mulheres
+
+print("################ TESTE COM Quantidade partido ############ ")
+resultados =  quantidade_candidaturas_por_partido()
+print(resultados)  # Espera-se que retorne todos os dados
+
 # Teste com nome
 print("################ TESTE COM NOME ############ ")
 resultados = consultar_candidatos(nome="nelson ")
