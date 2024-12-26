@@ -24,9 +24,7 @@ db.drop_collection("cidades")
 partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
 politico_collection = db["politicos"]
-raca_collection = db["racas"]
-estado_collection = db["estados"]
-cidade_collection = db["cidades"]
+
 
 caminho_csv = "./consulta_cand_2024/consulta_cand_2024_BRASIL_processado_sem_acentos.csv"
 
@@ -43,35 +41,6 @@ if os.path.exists(caminho_csv):
         }
         partido_id = partido_collection.insert_one(partido_doc).inserted_id
         partido_ids[row["SG_PARTIDO"]] = partido_id
-
-    # Estado
-    estados = df[["SG_UF"]].drop_duplicates()
-    estado_ids = {}
-    for _, row in estados.iterrows():
-        estado_doc = {
-            "nome": row["SG_UF"]
-        }
-        estado_id = estado_collection.insert_one(estado_doc).inserted_id
-        estado_ids[row["SG_UF"]] = estado_id
-
-    # Cidade
-    cidades = df[["SG_UF", "NM_UE"]].drop_duplicates()
-    cidade_ids = {}
-    for _, row in cidades.iterrows():
-        cidade_doc = {
-            "nome": row["NM_UE"],
-            "estado": estado_ids[row["SG_UF"]]
-        }
-        cidade_id = cidade_collection.insert_one(cidade_doc).inserted_id
-        cidade_ids[row["NM_UE"]] = cidade_id
-
-    # Raça
-    racas = df[["DS_COR_RACA"]].drop_duplicates()
-    for _, row in racas.iterrows():
-        raca_doc = {
-            "nome": row["DS_COR_RACA"]
-        }
-        raca_collection.insert_one(raca_doc)
 
     # Coligação
     coligacoes = df[["NM_UE", "NM_COLIGACAO", "DS_COMPOSICAO_COLIGACAO"]].drop_duplicates()

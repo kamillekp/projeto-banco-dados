@@ -19,9 +19,8 @@ import os
 
 load_dotenv()
 
-# Conectar ao banco de dados MongoDB
 
-mongo_uri = os.getenv("MONGO_URI")  # Banco de dados real
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 db = client["candidatos"]
 politico_collection = db["politicos"]
@@ -92,14 +91,14 @@ def porcentagem_candidaturas_por_raca():
 # resultado_partido = quantidade_candidaturas_por_partido()
 # print(resultado_partido)
 
-# print("\n################ TESTE COM Porcentagem de Mulheres Candidatas ############")
-# resultado_mulheres = porcentagem_mulheres_candidatas()
-# print(f"Porcentagem de Mulheres: {resultado_mulheres:.2f}%")
+print("\n################ TESTE COM Porcentagem de Mulheres Candidatas ############")
+resultado_mulheres = porcentagem_mulheres_candidatas()
+print(f"Porcentagem de Mulheres: {resultado_mulheres:.2f}%")
 
-# print("\n################ TESTE COM Porcentagem de Candidaturas por Raça ############")
-# resultado_raca = porcentagem_candidaturas_por_raca()
-# print(resultado_raca)
+print("\n################ TESTE COM Porcentagem de Candidaturas por Raça ############")
+resultado_raca = porcentagem_candidaturas_por_raca()
+print(resultado_raca)
 
-# print("\n################ TESTE COM Porcentagem de Candidaturas por Instrução ############")
-# resultado_instrucao = porcentagem_candidaturas_por_instrucao()
-# print(resultado_instrucao)
+print("\n################ TESTE COM Porcentagem de Candidaturas por Instrução ############")
+resultado_instrucao = porcentagem_candidaturas_por_instrucao()
+print(resultado_instrucao)

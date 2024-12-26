@@ -14,7 +14,7 @@ politico_collection = db["politicos"]
 partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
 
-def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None):
+def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, localizacao=None, partido_nome=None):
     politicos_encontrados = []  
     
     for politico in politico_collection.find({}, {"_id": 0}):
@@ -48,6 +48,19 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
         
         if isinstance(politico["nascimento"], datetime):
             politico["nascimento"] = politico["nascimento"].strftime("%d/%m/%Y")
+            
+        if localizacao and localizacao.lower() not in politico.get("cidade", "").lower():
+            continue
+
+        # Filtro por partido
+        if partido_nome:
+            partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
+            if not partido or partido_nome.lower() not in partido.get("nome", "").lower():
+                continue
+            politico["partido"] = partido.get("nome", "Desconhecido")
+        else:
+            partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
+            politico["partido"] = partido.get("nome", "Desconhecido") if partido else "Desconhecido"
         
         politicos_encontrados.append(politico)
     
@@ -62,57 +75,26 @@ def _calcular_ano_nascimento(idade):
     return ano_nascimento
 
 
-def porcentagem_candidaturas_por_instrucao(politicos):
-    total_candidatos = len(politicos)
-    instrucoes = {}
-
-    for politico in politicos:
-        instrucao = politico["instrucao"].lower()
-        if instrucao not in instrucoes:
-            instrucoes[instrucao] = 0
-        instrucoes[instrucao] += 1
-
-    instrucoes_percentual = {instrucao: (quantidade / total_candidatos) * 100 for instrucao, quantidade in instrucoes.items()}
-    return instrucoes_percentual
 
 
-def quantidade_candidaturas_por_partido():
-    partidos = {}
-    
-    for politico in politico_collection.find({}, {"_id": 0}):
-        partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
-        partido_nome = partido.get("nome", "Desconhecido") if partido else "Desconhecido"
-        
-        if partido_nome not in partidos:
-            partidos[partido_nome] = 0
-        partidos[partido_nome] += 1
+# print("################ TESTE COM Quantidade partido ############ ")
+# resultados =  quantidade_candidaturas_por_partido()
+# print(resultados)  # Espera-se que retorne todos os dados
 
-    return partidos
-
-def porcentagem_mulheres_candidatas(politicos):
-    total_candidatos = len(politicos)
-    mulheres = sum(1 for politico in politicos if politico["genero"].lower() == "feminino")
-    porcentagem_mulheres = (mulheres / total_candidatos) * 100 if total_candidatos > 0 else 0
-    return porcentagem_mulheres
-
-print("################ TESTE COM Quantidade partido ############ ")
-resultados =  quantidade_candidaturas_por_partido()
-print(resultados)  # Espera-se que retorne todos os dados
-
-# Teste com nome
+# #Teste com nome
 print("################ TESTE COM NOME ############ ")
 resultados = consultar_candidatos(nome="nelson ")
 print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
 
 # Teste com idade
-print("\n\n\n################ TESTE COM NOME + IDADE ############ ")
-resultados = consultar_candidatos(nome="nelson ", idade=59)
-print(resultados)  # Espera-se que retorne candidatos com idade aproximada de 39 anos
+# print("\n\n\n################ TESTE COM NOME + IDADE ############ ")
+# resultados = consultar_candidatos(nome="nelson ", idade=59)
+# print(resultados)  # Espera-se que retorne candidatos com idade aproximada de 39 anos
 
-# # Teste com raça
-# print("\n\n\n################ TESTE COM NOME + RACA ############ ")
-# resultados = consultar_candidatos(nome ="nelson felix", raca="Preta")
-# print(resultados)  # Espera-se que retorne candidatos com raça "Preta"
+# Teste com raça
+print("\n\n\n################ TESTE COM NOME + RACA ############ ")
+resultados = consultar_candidatos(nome ="nelson felix", raca="Preta")
+print(resultados)  # Espera-se que retorne candidatos com raça "Preta"
 
 # # Teste com gênero
 # resultados = consultar_candidatos(genero="Feminino")
