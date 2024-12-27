@@ -70,12 +70,43 @@ def _calcular_ano_nascimento(idade):
 def safe_lower(value):
     return value.lower() if isinstance(value, str) else ""
 
+def listar_partidos():
+    partidos = []
+    for partido in partido_collection.find({}, {"_id": 0}):  # Projeta para excluir o campo _id
+        partidos.append(partido)  # Adiciona cada partido à lista
+    return partidos
+
+def listar_cargos():
+    cargos = politico_collection.distinct("cargo")
+    return cargos
+
+def listar_cidades():
+    cidades = politico_collection.distinct("cidade")
+    return cidades
+
+def listar_raca():
+    racas = politico_collection.distinct("raca")
+    return racas
+
+def listar_genero():
+    generos = politico_collection.distinct("genero")
+    return generos
+
+def listar_ocupacao():
+    ocupacoes = politico_collection.distinct("ocupacao")
+    return ocupacoes
+
 # Testes
-
 # print("################ TESTE COM NOME ############ ")
-# resultados = consultar_candidatos(nome="nelson ")
-# print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
+'''resultado = consultar_candidatos(nome="jose carlos pedreiro")
+for info in resultado:
+    texto_info = f"Nome: {info['nome']}\nRaça: {info['raca']}\nGênero: {info['genero']}\nNascimento: {info['nascimento']}\n" \
+                 f"Estado: {info['estado']}\nCidade: {info['cidade']}\nInstrução: {info['instrucao']}\n" \
+                 f"Cargo: {info['cargo']}\nOcupação: {info['ocupacao']}\nPartido: {info['partido']}\nColigação: {info['coligacao']}\n\n"
 
+    print(texto_info)   
+'''
+    
 # print("################ TESTE COM NOME + idade ############ ")
 # resultados = consultar_candidatos(idade=59, raca="preta", nome="nego ")
 # print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
