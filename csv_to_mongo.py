@@ -70,6 +70,7 @@ if os.path.exists(caminho_csv):
             "cidade": row["NM_UE"],
             "instrucao": row["DS_GRAU_INSTRUCAO"],
             "cargo": row["DS_CARGO"],
+            "ocupacao": row["DS_OCUPACAO"],
             "partido": partido_ids.get(row["SG_PARTIDO"]),
             "coligacao": coligacao_ids.get(row["NM_COLIGACAO"])
         }
