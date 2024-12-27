@@ -6,7 +6,6 @@ import os
 load_dotenv()
 
 # Conectar ao banco de dados MongoDB
-
 mongo_uri = os.getenv("MONGO_URI")  # Banco de dados real
 client = MongoClient(mongo_uri)
 db = client["candidatos"]
@@ -18,7 +17,7 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
     politicos_encontrados = []  
     
     for politico in politico_collection.find({}, {"_id": 0}):
-        if nome and not politico["nome"].lower().startswith(nome.lower()):
+        if nome and not safe_lower(politico.get("nome", "")).startswith(nome.lower()):
             continue
 
         if idade:
@@ -53,14 +52,8 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
             continue
 
         # Filtro por partido
-        if partido_nome:
-            partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
-            if not partido or partido_nome.lower() not in partido.get("nome", "").lower():
-                continue
-            politico["partido"] = partido.get("nome", "Desconhecido")
-        else:
-            partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
-            politico["partido"] = partido.get("nome", "Desconhecido") if partido else "Desconhecido"
+        if partido_nome and partido_nome.lower() not in politico["partido"].lower():
+            continue
         
         politicos_encontrados.append(politico)
     
@@ -74,32 +67,35 @@ def _calcular_ano_nascimento(idade):
         ano_nascimento -= 1
     return ano_nascimento
 
+def safe_lower(value):
+    return value.lower() if isinstance(value, str) else ""
+
+# Testes
+
+# print("################ TESTE COM NOME ############ ")
+# resultados = consultar_candidatos(nome="nelson ")
+# print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
+
+# print("################ TESTE COM NOME + idade ############ ")
+# resultados = consultar_candidatos(idade=59, raca="preta", nome="nego ")
+# print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
+
+# print("\n\n\n################ TESTE COM NOME + RACA ############ ")
+# resultados = consultar_candidatos(nome="nelson", raca="branca")
+# print(resultados)  
 
 
-
-# print("################ TESTE COM Quantidade partido ############ ")
-# resultados =  quantidade_candidaturas_por_partido()
-# print(resultados)  # Espera-se que retorne todos os dados
-
-# #Teste com nome
-print("################ TESTE COM NOME ############ ")
-resultados = consultar_candidatos(nome="nelson ")
-print(resultados)  # Espera-se que retorne todos os dados de "Nelson"
-
-# Teste com idade
+# #  # Teste com idade
 # print("\n\n\n################ TESTE COM NOME + IDADE ############ ")
 # resultados = consultar_candidatos(nome="nelson ", idade=59)
-# print(resultados)  # Espera-se que retorne candidatos com idade aproximada de 39 anos
+# print(resultados) 
 
-# Teste com raça
-print("\n\n\n################ TESTE COM NOME + RACA ############ ")
-resultados = consultar_candidatos(nome ="nelson felix", raca="Preta")
-print(resultados)  # Espera-se que retorne candidatos com raça "Preta"
-
-# # Teste com gênero
+# ##  Teste com gênero
+# print("\n\n\n################ TESTE COM GENERO ############ ")
 # resultados = consultar_candidatos(genero="Feminino")
-# print(resultados)  # Espera-se que retorne todos os candidatos do gênero feminino
+# print(len(resultados))  
 
 # # Teste com cargo
-# resultados = consultar_candidatos(candidatura="Deputada")
-# print(resultados)  # Espera-se que retorne candidatos com o cargo "Deputada"
+# print("\n\n\n################ TESTE COM CARGO ############ ")
+# resultados = consultar_candidatos(nome="ana", candidatura="vereador")
+# print(len(resultados))  # Espera-se que retorne candidatos com o cargo "vereador"
