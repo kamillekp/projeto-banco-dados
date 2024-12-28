@@ -18,7 +18,7 @@ def realizar_pesquisa():
     partido = combobox7.get()
 
     # Chamando a função para consultar candidatos com os dados informados
-    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
+    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, None, cidade, partido)
 
     # Adicionando os resultados no frame com rolagem
     for info in resultado_pesquisa:

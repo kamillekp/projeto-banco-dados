@@ -14,7 +14,42 @@ partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
 cidade_collection = db["cidades"]
 
-def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, localizacao=None, partido_nome=None):
+def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, cidade=None, partido_nome=None):
+
+    query = {}
+    if nome:
+        query['nome'] = nome.lower()
+
+    if idade:
+        data_inicial, data_final = _calcular_anos_nascimento(idade)
+        query['nascimento'] = { "$gte":data_inicial,"$lt":data_final}
+
+    if raca:
+        query['raca'] = raca.lower()
+
+    if genero:
+        query['genero'] = genero.lower()
+
+    if ocupacao:
+        query['ocupacao'] = ocupacao.lower()
+
+    if candidatura:
+        query['cargo'] = candidatura.lower() 
+
+    if estado:
+        query['estado'] = estado.lower() 
+
+    if cidade:
+        query['cidade'] = cidade.lower() 
+        
+    if partido_nome:
+        partido = partido_collection.find_one({"nome": partido_nome})
+        query["partido"] = partido.get("_id", "")
+    
+    print (query)
+    return politico_collection.find(query)
+    
+def consultar_candidatos2(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, localizacao=None, partido_nome=None):
     politicos_encontrados = []  
     
     for politico in politico_collection.find({}, {"_id": 0}):
@@ -22,7 +57,7 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
             continue
 
         if idade:
-            ano_nascimento = _calcular_ano_nascimento(idade)
+            ano_nascimento = _calcular_anos_nascimento(idade)
             if not (ano_nascimento <= politico["nascimento"].year < ano_nascimento + 1):
                 continue
 
@@ -60,13 +95,14 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
     
     return politicos_encontrados
 
-def _calcular_ano_nascimento(idade):
-    ano_atual = datetime.now()
-    ano_nascimento = ano_atual.year - idade
-    
-    if (ano_atual.month, ano_atual.day) < (1, 1):
-        ano_nascimento -= 1
-    return ano_nascimento
+def _calcular_anos_nascimento(idade):
+    data_atual = datetime.now()
+    ano_nascimento = data_atual.year - idade
+
+    start = datetime(ano_nascimento-1, data_atual.month, data_atual.day, 23, 59, 59)
+    end = datetime(ano_nascimento, data_atual.month, data_atual.day, 00, 00, 00)
+
+    return start, end
 
 def safe_lower(value):
     return value.lower() if isinstance(value, str) else ""
