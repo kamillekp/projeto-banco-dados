@@ -16,20 +16,29 @@ db = client["candidatos"]
 db.drop_collection("partidos")
 db.drop_collection("coligacoes")
 db.drop_collection("politicos")
-db.drop_collection("racas")
-db.drop_collection("estados")
 db.drop_collection("cidades")
 
 # Coleções
 partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
 politico_collection = db["politicos"]
-
+cidade_collection = db["cidades"]
 
 caminho_csv = "./consulta_cand_2024/consulta_cand_2024_BRASIL_processado_sem_acentos.csv"
 
 if os.path.exists(caminho_csv):
     df = pd.read_csv(caminho_csv)
+        
+    # Cidade
+    cidades = df[["SG_UF", "NM_UE"]].drop_duplicates()
+    cidade_ids = {}
+    for _, row in cidades.iterrows():
+        cidade_doc = {
+            "nome": row["NM_UE"],
+            "estado": row["SG_UF"]
+        }
+        cidade_id = cidade_collection.insert_one(cidade_doc).inserted_id
+        cidade_ids[row["NM_UE"]] = cidade_id
 
     # Partido
     partidos = df[["SG_PARTIDO", "NM_PARTIDO", "NR_PARTIDO"]].drop_duplicates()

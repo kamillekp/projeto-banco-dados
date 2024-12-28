@@ -3,15 +3,6 @@ from tkinter import ttk
 import customtkinter
 import consulta_candidatos as cc
 
-
-
-
-
-
-
-
-
-
 resultado_pesquisa = []
 #=============================================================================================================================================
 def realizar_pesquisa():
@@ -22,11 +13,12 @@ def realizar_pesquisa():
     genero = combobox2.get()
     ocupacao = combobox3.get()
     candidatura = combobox4.get()
-    cidade = combobox5.get()
-    partido = combobox6.get()
+    estado = combobox5.get()
+    cidade = combobox6.get()
+    partido = combobox7.get()
 
     # Chamando a função para consultar candidatos com os dados informados
-    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, cidade, partido)
+    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
 
     # Adicionando os resultados no frame com rolagem
     for info in resultado_pesquisa:
@@ -36,6 +28,11 @@ def realizar_pesquisa():
     # Exibindo o frame2 (onde os resultados são mostrados)
     tela_secundaria()
 
+def seleciona_estado(evento):
+    estado = evento.widget.get()
+    opcoes_cidade = cc.listar_cidades(estado)
+    combobox6.configure(values = opcoes_cidade, state='readonly')
+
 def tela_principal():
     frame2.pack_forget()
     frame1.pack()
@@ -43,13 +40,6 @@ def tela_principal():
 def tela_secundaria():
     frame1.pack_forget() 
     frame2.pack() 
-
-
-
-
-
-
-
 
 
 #=============================================================================================================================================
@@ -75,13 +65,6 @@ retangulo_y1 = 220
 spacing = 40
 
 
-
-
-
-
-
-
-
 #=============================================================================================================================================
 # INICIALIZAÇÃO DA TELA---------------------------------------------------------------------------------------------------------------------------------
 root = tk.Tk()
@@ -104,7 +87,7 @@ canvas.create_rectangle(largura_retangulo, 100, 100, 0, fill=cor_background_titu
 canvas.create_text(400, 50, text="POLÍTICA TRANSPARENTE", font=("Lexend Peta Light", 20), fill=cor_texto)
 
 # TEXTO CENTRO
-opcoes_texto = ["Nome:", "Idade:", "Raça:", "Gênero:", "Ocupação:", "Candidatura:", "Cidade:", "Partido:"]
+opcoes_texto = ["Nome:", "Idade:", "Raça:", "Gênero:", "Ocupação:", "Candidatura:", "Estado:", "Cidade:", "Partido:"]
 variaveis = [tk.IntVar() for _ in opcoes_texto]
 for i, opcao in enumerate(opcoes_texto):
     canvas.create_text(170, 150 + i * 40, text=opcao, font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
@@ -118,7 +101,7 @@ input2.place(x=300, y=185)
 # COMBOBOXES CENTRO
 opcoes_raca = cc.listar_raca()
 opcoes_genero = cc.listar_genero()
-opcoes_cidades = cc.listar_cidades()
+opcoes_estados = cc.listar_estados()
 opcoes_partidos = cc.listar_partidos()
 opcoes_ocupacao = cc.listar_ocupacao()
 opcoes_candidatura = cc.listar_cargos()
@@ -132,20 +115,17 @@ combobox3 = ttk.Combobox(frame1, values=opcoes_ocupacao, state="readonly", heigh
 combobox3.place(x=300, y=300)
 combobox4 = ttk.Combobox(frame1, values=opcoes_candidatura, state="readonly", height=10, width=52)
 combobox4.place(x=300, y=340)
-combobox5 = ttk.Combobox(frame1, values=opcoes_cidades, state="readonly", height=10, width=52)
+combobox5 = ttk.Combobox(frame1, values=opcoes_estados, state="readonly", height=10, width=52)
 combobox5.place(x=300, y=380)
-combobox6 = ttk.Combobox(frame1, values=nomes_partidos, state="readonly", height=10, width=52)
+combobox5.bind("<<ComboboxSelected>>", seleciona_estado)
+combobox6 = ttk.Combobox(frame1, state="disabled", height=10, width=52)
 combobox6.place(x=300, y=420)
+combobox7 = ttk.Combobox(frame1, values=nomes_partidos, state="readonly", height=10, width=52)
+combobox7.place(x=300, y=460)
 
 # BOTÃO DE PESQUISA
 pesquisa_botao = tk.Button(frame1, text="pesquisar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=realizar_pesquisa)
 pesquisa_botao.place(x=180, y=650)
-
-
-
-
-
-
 
 
 #============================================================================================================================================
@@ -185,8 +165,6 @@ frame21.update_idletasks()
 
 # BOTÃO VOLTAR
 tk.Button(principal_frame, text="Voltar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=tela_principal).pack(pady=30, side=tk.BOTTOM)  # Posicionamento no final
-
-
 
 
 #============================================================================================================================================

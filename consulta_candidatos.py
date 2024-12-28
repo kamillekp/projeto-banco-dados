@@ -12,8 +12,9 @@ db = client["candidatos"]
 politico_collection = db["politicos"]
 partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
+cidade_collection = db["cidades"]
 
-def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, localizacao=None, partido_nome=None):
+def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, localizacao=None, partido_nome=None):
     politicos_encontrados = []  
     
     for politico in politico_collection.find({}, {"_id": 0}):
@@ -80,8 +81,13 @@ def listar_cargos():
     cargos = politico_collection.distinct("cargo")
     return cargos
 
-def listar_cidades():
-    cidades = politico_collection.distinct("cidade")
+def listar_estados():
+    estados = cidade_collection.distinct("estado")
+    return estados
+
+def listar_cidades(estado):
+    cidades_filtradas = cidade_collection.find({"estado": estado})
+    cidades = cidades_filtradas.distinct("nome")
     return cidades
 
 def listar_raca():
