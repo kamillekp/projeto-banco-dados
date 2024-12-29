@@ -18,11 +18,11 @@ def realizar_pesquisa():
     partido = combobox7.get()
 
     # Chamando a função para consultar candidatos com os dados informados
-    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, None, cidade, partido)
+    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
 
     # Adicionando os resultados no frame com rolagem
     for info in resultado_pesquisa:
-        label = customtkinter.CTkLabel(frame21, text=info, font=("Arial", 12))
+        label = customtkinter.CTkLabel(frame21, text=info, font=("Arial", 5))
         label.pack(pady=10)
 
     # Exibindo o frame2 (onde os resultados são mostrados)
@@ -106,6 +106,7 @@ opcoes_partidos = cc.listar_partidos()
 opcoes_ocupacao = cc.listar_ocupacao()
 opcoes_candidatura = cc.listar_cargos()
 nomes_partidos = [partido['nome'] for partido in opcoes_partidos]
+nomes_partidos.insert(0,'Selecione o Partido')
 
 combobox1 = ttk.Combobox(frame1, values=opcoes_raca, state="readonly", height=10, width=52)
 combobox1.place(x=300, y=220)

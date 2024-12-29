@@ -18,31 +18,31 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
 
     query = {}
     if nome:
-        query['nome'] = nome.lower()
+        query['nome'] = { "$regex": nome.lower()}
 
     if idade:
-        data_inicial, data_final = _calcular_anos_nascimento(idade)
+        data_inicial, data_final = _calcular_anos_nascimento(int(idade))
         query['nascimento'] = { "$gte":data_inicial,"$lt":data_final}
 
-    if raca:
+    if raca and not raca.startswith("Selecione"):
         query['raca'] = raca.lower()
 
-    if genero:
+    if genero and not genero.startswith("Selecione"):
         query['genero'] = genero.lower()
 
-    if ocupacao:
+    if ocupacao and not ocupacao.startswith("Selecione"):
         query['ocupacao'] = ocupacao.lower()
 
-    if candidatura:
+    if candidatura and not candidatura.startswith("Selecione"):
         query['cargo'] = candidatura.lower() 
 
-    if estado:
+    if estado and not estado.startswith("Selecione"):
         query['estado'] = estado.lower() 
 
-    if cidade:
+    if cidade and not cidade.startswith("Selecione"):
         query['cidade'] = cidade.lower() 
         
-    if partido_nome:
+    if partido_nome and not partido_nome.startswith("Selecione"):
         partido = partido_collection.find_one({"nome": partido_nome})
         query["partido"] = partido.get("_id", "")
     
@@ -115,27 +115,33 @@ def listar_partidos():
 
 def listar_cargos():
     cargos = politico_collection.distinct("cargo")
+    cargos.insert(0,'Selecione o Cargo')
     return cargos
 
 def listar_estados():
     estados = cidade_collection.distinct("estado")
+    estados.insert(0,'Selecione o Estado')
     return estados
 
 def listar_cidades(estado):
     cidades_filtradas = cidade_collection.find({"estado": estado})
     cidades = cidades_filtradas.distinct("nome")
+    cidades.insert(0,'Selecione a cidade')
     return cidades
 
 def listar_raca():
     racas = politico_collection.distinct("raca")
+    racas.insert(0,'Selecione a Raça')
     return racas
 
 def listar_genero():
     generos = politico_collection.distinct("genero")
+    generos.insert(0,'Selecione o Gênero')
     return generos
 
 def listar_ocupacao():
     ocupacoes = politico_collection.distinct("ocupacao")
+    ocupacoes.insert(0,'Selecione a Ocupação')
     return ocupacoes
 
 # Testes
