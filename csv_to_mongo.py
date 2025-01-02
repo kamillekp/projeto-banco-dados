@@ -46,6 +46,7 @@ if os.path.exists(caminho_csv):
     for _, row in partidos.iterrows():
         partido_doc = {
             "nome": row["NM_PARTIDO"],
+            "sigla": row["SG_PARTIDO"],
             "numero": row["NR_PARTIDO"]
         }
         partido_id = partido_collection.insert_one(partido_doc).inserted_id

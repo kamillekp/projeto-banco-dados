@@ -2,8 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 import customtkinter
 import consulta_candidatos as cc
+import estatisticas_avancadas as ea
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-resultado_pesquisa = []
+resultado_pesquisa = {}
 #=============================================================================================================================================
 def realizar_pesquisa():
     # Pegando os valores atuais dos campos de entrada
@@ -18,12 +22,94 @@ def realizar_pesquisa():
     partido = combobox7.get()
 
     # Chamando a função para consultar candidatos com os dados informados
-    resultado_pesquisa = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
-
+    resultado_pesquisa, query = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
     # Adicionando os resultados no frame com rolagem
+
+    for widget in frame21.winfo_children():
+        widget.destroy()
+
+    for widget in frame22.winfo_children():
+        widget.destroy()
+
+    for widget in frame23.winfo_children():
+        widget.destroy()
+
+    for widget in frame24.winfo_children():
+        widget.destroy()
+
+    # LABELS COM INFORMAÇÕES                                                                         
+
     for info in resultado_pesquisa:
-        label = customtkinter.CTkLabel(frame21, text=info, font=("Arial", 5))
-        label.pack(pady=10)
+        canvas_candidato = tk.Canvas(frame21, width=470, height=50, bg="white", borderwidth=0)
+        canvas_candidato.pack()
+        i = 10
+        for chave, valor in info.items():
+            if (chave=="partido"):
+                partido_candidato = cc.get_partido(valor)
+                canvas_candidato.create_text(350, 25, text=str(partido_candidato["sigla"]).upper(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+            else:
+                canvas_candidato.create_text(i, 25, text=str(valor).title(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+                i+=250
+    
+    frame21.update_idletasks()
+
+    # CRIAÇÃO DOS GRAFICOS DAS ESTATISTICAS
+    if len(resultado_pesquisa) and not nome:
+
+        # ESTATISTICAS DE NIVEL DE INSTRUÇÃO
+        instrucao_estatisticas = ea.porcentagem_candidaturas_por_instrucao(query, len(resultado_pesquisa))
+
+        fig = Figure(figsize = (2.3, 1.7), dpi = 100, facecolor=cor_background_meio) 
+        plot1 = fig.add_subplot(111) 
+
+        labels=[]
+        for instrucao in instrucao_estatisticas.keys():
+            labels.append(instrucao.replace(" ", "\n"))
+            
+        plot1.pie(instrucao_estatisticas.values(), 
+                labels= labels, 
+                autopct='%1.0f%%',
+                labeldistance=1.2,
+                textprops={'fontsize': 6},
+                startangle=90)
+    
+        canvas = FigureCanvasTkAgg(fig, master = frame22)   
+        canvas.draw()
+        canvas.get_tk_widget().pack(side = tk.LEFT) 
+
+        # ESTATISTICAS DE GENERO
+        if not genero or genero.startswith("Select"):
+            
+            fig2 = Figure(figsize = (2, 1.7), dpi = 100, facecolor=cor_background_meio) 
+            plot2 = fig2.add_subplot(111) 
+
+            genero_estatisticas = ea.porcentagem_mulheres_candidatas(query, len(resultado_pesquisa))
+            plot2.pie(genero_estatisticas.values(), 
+                labels= genero_estatisticas.keys(), 
+                autopct='%1.0f%%',
+                textprops={'fontsize': 6},
+                startangle=90
+                )
+            canvas2 = FigureCanvasTkAgg(fig2, master = frame23)   
+            canvas2.draw() 
+            canvas2.get_tk_widget().pack()
+        
+        # ESTATISTICAS DE RAÇA
+        if not raca or raca.startswith("Select"):
+            
+            fig3 = Figure(figsize = (1.9, 1.7), dpi = 100, facecolor=cor_background_meio) 
+            plot3 = fig3.add_subplot(111) 
+
+            raca_estatisticas = ea.porcentagem_candidaturas_por_raca(query, opcoes_raca, len(resultado_pesquisa))
+            plot3.pie(raca_estatisticas.values(), 
+                labels= raca_estatisticas.keys(), 
+                autopct='%1.0f%%',
+                textprops={'fontsize': 6},
+                startangle=90
+                )
+            canvas3 = FigureCanvasTkAgg(fig3, master = frame24)   
+            canvas3.draw() 
+            canvas3.get_tk_widget().pack()
 
     # Exibindo o frame2 (onde os resultados são mostrados)
     tela_secundaria()
@@ -105,7 +191,7 @@ opcoes_estados = cc.listar_estados()
 opcoes_partidos = cc.listar_partidos()
 opcoes_ocupacao = cc.listar_ocupacao()
 opcoes_candidatura = cc.listar_cargos()
-nomes_partidos = [partido['nome'] for partido in opcoes_partidos]
+nomes_partidos = [partido['sigla'] for partido in opcoes_partidos]
 nomes_partidos.insert(0,'Selecione o Partido')
 
 combobox1 = ttk.Combobox(frame1, values=opcoes_raca, state="readonly", height=10, width=52)
@@ -149,24 +235,26 @@ principal_frame.pack_propagate(False)
 principal_frame.pack()
 
 # FRAME COM ROLAGEM
-frame21 = customtkinter.CTkScrollableFrame(principal_frame, width=500, height=500, fg_color="white")
+frame21 = customtkinter.CTkScrollableFrame(principal_frame, width=500, height=200, fg_color="white")
 frame21.pack(side=tk.TOP)
-frame21.place(relx=0.5, rely=0.45, anchor="center")
+frame21.place(relx=0.5, rely=0.2, anchor="center")
 
-# LABELS COM INFORMAÇÕES                                                                          <------ PROBLEMA ESTÁ AQUI
-for info in resultado_pesquisa:
-    for chave, valor in info.items():
-        label = tk.Label(frame21, text=f"{chave.capitalize()}: {valor}", pady=5)
-        label.pack()
+# FRAME PARA ESTATISTICAS
 
-    label_espaco = tk.Label(frame21, text="", pady=10)
-    label_espaco.pack()
+frame22 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
+frame22.pack()
+frame22.place(relx=0.25, rely=0.53, anchor="center")
 
-frame21.update_idletasks() 
+frame23 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
+frame23.pack()
+frame23.place(relx=0.75, rely=0.53, anchor="center")
+
+frame24 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
+frame24.pack()
+frame24.place(relx=0.5, rely=0.77, anchor="center")
 
 # BOTÃO VOLTAR
 tk.Button(principal_frame, text="Voltar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=tela_principal).pack(pady=30, side=tk.BOTTOM)  # Posicionamento no final
-
 
 #============================================================================================================================================
 tela_principal()

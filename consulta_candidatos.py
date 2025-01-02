@@ -43,57 +43,12 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
         query['cidade'] = cidade.lower() 
         
     if partido_nome and not partido_nome.startswith("Selecione"):
-        partido = partido_collection.find_one({"nome": partido_nome})
+        partido = partido_collection.find_one({"sigla": partido_nome})
         query["partido"] = partido.get("_id", "")
     
-    print (query)
-    return politico_collection.find(query)
+    resultado_query = politico_collection.find(query,{"_id": 0, "nome": 1, "partido": 1, "cargo": 1})
+    return list(resultado_query), query
     
-def consultar_candidatos2(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, localizacao=None, partido_nome=None):
-    politicos_encontrados = []  
-    
-    for politico in politico_collection.find({}, {"_id": 0}):
-        if nome and not safe_lower(politico.get("nome", "")).startswith(nome.lower()):
-            continue
-
-        if idade:
-            ano_nascimento = _calcular_anos_nascimento(idade)
-            if not (ano_nascimento <= politico["nascimento"].year < ano_nascimento + 1):
-                continue
-
-        if raca and raca.lower() not in politico.get("raca", "").lower():
-            continue
-
-        if genero and genero.lower() not in politico.get("genero", "").lower():
-            continue
-
-        if ocupacao and ocupacao.lower() not in politico.get("ocupacao", "").lower():
-            continue
-
-        if candidatura and candidatura.lower() not in politico.get("cargo", "").lower():
-            continue 
-
-        partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
-        if partido:
-            politico["partido"] = partido.get("nome", "Desconhecido")
-
-        coligacao = coligacao_collection.find_one({"_id": politico["coligacao"]}, {"_id": 0})
-        if coligacao:
-            politico["coligacao"] = coligacao.get("nome", "Desconhecido")
-        
-        if isinstance(politico["nascimento"], datetime):
-            politico["nascimento"] = politico["nascimento"].strftime("%d/%m/%Y")
-            
-        if localizacao and localizacao.lower() not in politico.get("cidade", "").lower():
-            continue
-
-        # Filtro por partido
-        if partido_nome and partido_nome.lower() not in politico["partido"].lower():
-            continue
-        
-        politicos_encontrados.append(politico)
-    
-    return politicos_encontrados
 
 def _calcular_anos_nascimento(idade):
     data_atual = datetime.now()
@@ -143,6 +98,55 @@ def listar_ocupacao():
     ocupacoes = politico_collection.distinct("ocupacao")
     ocupacoes.insert(0,'Selecione a Ocupação')
     return ocupacoes
+
+def get_partido(id):
+    return partido_collection.find_one({"_id":id})
+
+# def consultar_candidatos2(nome=None, idade=None, raca=None, genero=None, ocupacao=None, candidatura=None, estado=None, localizacao=None, partido_nome=None):
+#     politicos_encontrados = []  
+    
+#     for politico in politico_collection.find({}, {"_id": 0}):
+#         if nome and not safe_lower(politico.get("nome", "")).startswith(nome.lower()):
+#             continue
+
+#         if idade:
+#             ano_nascimento = _calcular_anos_nascimento(idade)
+#             if not (ano_nascimento <= politico["nascimento"].year < ano_nascimento + 1):
+#                 continue
+
+#         if raca and raca.lower() not in politico.get("raca", "").lower():
+#             continue
+
+#         if genero and genero.lower() not in politico.get("genero", "").lower():
+#             continue
+
+#         if ocupacao and ocupacao.lower() not in politico.get("ocupacao", "").lower():
+#             continue
+
+#         if candidatura and candidatura.lower() not in politico.get("cargo", "").lower():
+#             continue 
+
+#         partido = partido_collection.find_one({"_id": politico["partido"]}, {"_id": 0})
+#         if partido:
+#             politico["partido"] = partido.get("nome", "Desconhecido")
+
+#         coligacao = coligacao_collection.find_one({"_id": politico["coligacao"]}, {"_id": 0})
+#         if coligacao:
+#             politico["coligacao"] = coligacao.get("nome", "Desconhecido")
+        
+#         if isinstance(politico["nascimento"], datetime):
+#             politico["nascimento"] = politico["nascimento"].strftime("%d/%m/%Y")
+            
+#         if localizacao and localizacao.lower() not in politico.get("cidade", "").lower():
+#             continue
+
+#         # Filtro por partido
+#         if partido_nome and partido_nome.lower() not in politico["partido"].lower():
+#             continue
+        
+#         politicos_encontrados.append(politico)
+    
+#     return politicos_encontrados
 
 # Testes
 # print("################ TESTE COM NOME ############ ")
