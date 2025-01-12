@@ -65,6 +65,10 @@ def realizar_pesquisa():
     pagina_texto = f'{pagina*50+1}-{(pagina+1)*50} de {len(resultado_pesquisa)}'
     if len(resultado_pesquisa)<(pagina+1)*50:
         pagina_texto = f'{pagina*50+1}-{len(resultado_pesquisa)} de {len(resultado_pesquisa)}'
+         
+    canvas_pagina.create_text(100,10, text=pagina_texto, 
+                                font=("Lexend Peta Light", 9), 
+                                fill=cor_texto, anchor="w", tag = "texto")
 
     # CRIAÇÃO DOS GRAFICOS DAS ESTATISTICAS
     if len(resultado_pesquisa) and not nome:
@@ -75,10 +79,9 @@ def realizar_pesquisa():
 
         frame21.configure(height = 250)
         frame21.place(relx=0.5, rely=0.25, anchor="center")
-        canvas_pagina.place(relx=0.45, rely = 0.43)
-        canvas_pagina.create_text(100,10, text=pagina_texto, 
-                                  font=("Lexend Peta Light", 9), 
-                                  fill=cor_texto, anchor="w", tag = "texto")
+        botao_esquerda.place(relx=0.85, rely = 0.47)
+        botao_direita.place(relx=0.9, rely = 0.47)
+        canvas_pagina.place(relx=0.5, rely = 0.47)
 
         if (raca and not raca.startswith("Selecione")) and (genero and not genero.startswith("Selecione")): 
             frame23.place_forget()
@@ -116,7 +119,9 @@ def realizar_pesquisa():
         else:
             frame21.configure(height = 200)
             frame21.place(relx=0.5, rely=0.2, anchor="center")
-            canvas_pagina.place(relx=0.45, rely = 0.38)
+            canvas_pagina.place(relx=0.5, rely = 0.38)
+            botao_esquerda.place(relx=0.85, rely = 0.38)
+            botao_direita.place(relx=0.9, rely = 0.38)
 
             frame23.configure(height=130)
             frame23.place(relx=0.75, rely=0.53, anchor="center")
@@ -184,10 +189,12 @@ def realizar_pesquisa():
         frame22.place_forget()
         frame23.place_forget()
         frame24.place_forget()
-    
+
         frame21.configure(height = 500)
-        frame21.place(relx=0.5, rely=0.45, anchor="center")
-        canvas_pagina.place(relx=0.45, rely = 0.85)
+        frame21.place(relx=0.5, rely=0.42, anchor="center")
+        canvas_pagina.place(relx=0.5, rely = 0.85)
+        botao_esquerda.place(relx=0.85, rely = 0.85)
+        botao_direita.place(relx=0.9, rely = 0.85)
 
     # Exibindo o frame2 (onde os resultados são mostrados)
     tela_secundaria()
