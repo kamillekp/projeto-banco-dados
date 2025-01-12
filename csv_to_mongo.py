@@ -15,14 +15,14 @@ db = client["candidatos"]
 
 db.drop_collection("partidos")
 db.drop_collection("coligacoes")
-db.drop_collection("politicos")
 db.drop_collection("cidades")
+db.drop_collection("politicos")
 
 # Coleções
 partido_collection = db["partidos"]
 coligacao_collection = db["coligacoes"]
-politico_collection = db["politicos"]
 cidade_collection = db["cidades"]
+politico_collection = db["politicos"]
 
 caminho_csv = "./consulta_cand_2024/consulta_cand_2024_BRASIL_processado_sem_acentos.csv"
 

@@ -18,7 +18,7 @@ def consultar_candidatos(nome=None, idade=None, raca=None, genero=None, ocupacao
 
     query = {}
     if nome:
-        query['nome'] = { "$regex": nome.lower()}
+        query['nome'] = { "$regex": '^'+nome.lower()}
 
     if idade:
         data_inicial, data_final = _calcular_anos_nascimento(int(idade))

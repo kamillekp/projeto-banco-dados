@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 resultado_pesquisa = {}
+pagina = 0
 #=============================================================================================================================================
 def realizar_pesquisa():
     # Pegando os valores atuais dos campos de entrada
@@ -22,6 +23,7 @@ def realizar_pesquisa():
     partido = combobox7.get()
 
     # Chamando a função para consultar candidatos com os dados informados
+    global resultado_pesquisa
     resultado_pesquisa, query = cc.consultar_candidatos(nome, idade, raca, genero, ocupacao, candidatura, estado, cidade, partido)
     # Adicionando os resultados no frame com rolagem
 
@@ -37,13 +39,20 @@ def realizar_pesquisa():
     for widget in frame24.winfo_children():
         widget.destroy()
 
+    canvas_pagina.delete("texto")
     # LABELS COM INFORMAÇÕES                                                                         
+    pagina = 0
 
-    for info in resultado_pesquisa:
+    for j in range(pagina*50, (pagina+1)*50):
+
+        if j>=len(resultado_pesquisa):
+            break
+
         canvas_candidato = tk.Canvas(frame21, width=470, height=50, bg="white", borderwidth=0)
         canvas_candidato.pack()
         i = 10
-        for chave, valor in info.items():
+
+        for chave, valor in resultado_pesquisa[j].items():
             if (chave=="partido"):
                 partido_candidato = cc.get_partido(valor)
                 canvas_candidato.create_text(350, 25, text=str(partido_candidato["sigla"]).upper(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
@@ -52,14 +61,76 @@ def realizar_pesquisa():
                 i+=250
     
     frame21.update_idletasks()
+    
+    pagina_texto = f'{pagina*50+1}-{(pagina+1)*50} de {len(resultado_pesquisa)}'
+    if len(resultado_pesquisa)<(pagina+1)*50:
+        pagina_texto = f'{pagina*50+1}-{len(resultado_pesquisa)} de {len(resultado_pesquisa)}'
 
     # CRIAÇÃO DOS GRAFICOS DAS ESTATISTICAS
     if len(resultado_pesquisa) and not nome:
 
+        fig = Figure(figsize = (2.3, 1.7), dpi = 100, facecolor=cor_background_meio) 
+        fig2 = Figure(figsize = (2, 1.7), dpi = 100, facecolor=cor_background_meio) 
+        fig3 = Figure(figsize = (1.9, 1.7), dpi = 100, facecolor=cor_background_meio) 
+
+        frame21.configure(height = 250)
+        frame21.place(relx=0.5, rely=0.25, anchor="center")
+        canvas_pagina.place(relx=0.45, rely = 0.43)
+        canvas_pagina.create_text(100,10, text=pagina_texto, 
+                                  font=("Lexend Peta Light", 9), 
+                                  fill=cor_texto, anchor="w", tag = "texto")
+
+        if (raca and not raca.startswith("Selecione")) and (genero and not genero.startswith("Selecione")): 
+            frame23.place_forget()
+            frame24.place_forget()
+
+            frame22.configure(height = 250)
+            frame22.place(relx=0.5, rely=0.7, anchor="center")
+            
+            fig = Figure(figsize = (3.5, 2.8), dpi = 100, facecolor=cor_background_meio) 
+
+        elif raca and not raca.startswith("Selecione"): 
+            frame24.place_forget()
+            
+            fig = Figure(figsize = (2.5, 2), dpi = 100, facecolor=cor_background_meio) 
+            fig2 = Figure(figsize = (2.5, 2), dpi = 100, facecolor=cor_background_meio) 
+
+            frame22.configure(height=160)
+            frame22.place(relx=0.27, rely=0.7, anchor="center")
+            
+            frame23.configure(height=160)
+            frame23.place(relx=0.73, rely=0.7, anchor="center")
+
+        elif genero and not genero.startswith("Selecione"): 
+            frame23.place_forget()
+
+            fig = Figure(figsize = (2.5, 2), dpi = 100, facecolor=cor_background_meio) 
+            fig3 = Figure(figsize = (2.5, 2), dpi = 100, facecolor=cor_background_meio) 
+
+            frame22.configure(height=160)
+            frame22.place(relx=0.27, rely=0.7, anchor="center")
+            
+            frame24.configure(height=160)
+            frame24.place(relx=0.73, rely=0.7, anchor="center")
+        
+        else:
+            frame21.configure(height = 200)
+            frame21.place(relx=0.5, rely=0.2, anchor="center")
+            canvas_pagina.place(relx=0.45, rely = 0.38)
+
+            frame23.configure(height=130)
+            frame23.place(relx=0.75, rely=0.53, anchor="center")
+
+            frame24.configure(height=130)
+            frame24.place(relx=0.5, rely=0.77, anchor="center")
+
+            frame22.configure(height=130)
+            frame22.place(relx=0.25, rely=0.53, anchor="center")
+
+
         # ESTATISTICAS DE NIVEL DE INSTRUÇÃO
         instrucao_estatisticas = ea.porcentagem_candidaturas_por_instrucao(query, len(resultado_pesquisa))
 
-        fig = Figure(figsize = (2.3, 1.7), dpi = 100, facecolor=cor_background_meio) 
         plot1 = fig.add_subplot(111) 
 
         labels=[]
@@ -78,9 +149,8 @@ def realizar_pesquisa():
         canvas.get_tk_widget().pack(side = tk.LEFT) 
 
         # ESTATISTICAS DE GENERO
-        if not genero or genero.startswith("Select"):
+        if not genero or genero.startswith("Selecione"):
             
-            fig2 = Figure(figsize = (2, 1.7), dpi = 100, facecolor=cor_background_meio) 
             plot2 = fig2.add_subplot(111) 
 
             genero_estatisticas = ea.porcentagem_mulheres_candidatas(query, len(resultado_pesquisa))
@@ -95,9 +165,8 @@ def realizar_pesquisa():
             canvas2.get_tk_widget().pack()
         
         # ESTATISTICAS DE RAÇA
-        if not raca or raca.startswith("Select"):
+        if not raca or raca.startswith("Selecione"):
             
-            fig3 = Figure(figsize = (1.9, 1.7), dpi = 100, facecolor=cor_background_meio) 
             plot3 = fig3.add_subplot(111) 
 
             raca_estatisticas = ea.porcentagem_candidaturas_por_raca(query, opcoes_raca, len(resultado_pesquisa))
@@ -110,6 +179,15 @@ def realizar_pesquisa():
             canvas3 = FigureCanvasTkAgg(fig3, master = frame24)   
             canvas3.draw() 
             canvas3.get_tk_widget().pack()
+
+    elif nome:
+        frame22.place_forget()
+        frame23.place_forget()
+        frame24.place_forget()
+    
+        frame21.configure(height = 500)
+        frame21.place(relx=0.5, rely=0.45, anchor="center")
+        canvas_pagina.place(relx=0.45, rely = 0.85)
 
     # Exibindo o frame2 (onde os resultados são mostrados)
     tela_secundaria()
@@ -127,6 +205,76 @@ def tela_secundaria():
     frame1.pack_forget() 
     frame2.pack() 
 
+def listar_anteriores():
+    global pagina
+    if pagina:
+        
+        for widget in frame21.winfo_children():
+            widget.destroy()
+
+        pagina-=1
+        for j in range(pagina*50, (pagina+1)*50):
+
+            if j>=len(resultado_pesquisa):
+                break
+
+            canvas_candidato = tk.Canvas(frame21, width=470, height=50, bg="white", borderwidth=0)
+            canvas_candidato.pack()
+            i = 10
+
+            for chave, valor in resultado_pesquisa[j].items():
+                if (chave=="partido"):
+                    partido_candidato = cc.get_partido(valor)
+                    canvas_candidato.create_text(350, 25, text=str(partido_candidato["sigla"]).upper(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+                else:
+                    canvas_candidato.create_text(i, 25, text=str(valor).title(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+                    i+=250
+        
+        frame21.update_idletasks()
+
+        pagina_texto = f'{pagina*50+1}-{(pagina+1)*50} de {len(resultado_pesquisa)}'
+        if len(resultado_pesquisa)<(pagina+1)*50:
+            pagina_texto = f'{pagina*50+1}-{len(resultado_pesquisa)} de {len(resultado_pesquisa)}'
+            
+        canvas_pagina.delete("texto")
+        canvas_pagina.create_text(100,10, text=pagina_texto, 
+                                  font=("Lexend Peta Light", 9), 
+                                  fill=cor_texto, anchor="w", tag = "texto")
+        
+def listar_posteriores():
+    global pagina
+    if (pagina+1)*50<=len(resultado_pesquisa):
+
+        for widget in frame21.winfo_children():
+            widget.destroy()
+
+        pagina+=1
+        for j in range(pagina*50, (pagina+1)*50):
+            if j>=len(resultado_pesquisa):
+                break
+
+            canvas_candidato = tk.Canvas(frame21, width=470, height=50, bg="white", borderwidth=0)
+            canvas_candidato.pack()
+            i = 10
+
+            for chave, valor in resultado_pesquisa[j].items():
+                if (chave=="partido"):
+                    partido_candidato = cc.get_partido(valor)
+                    canvas_candidato.create_text(350, 25, text=str(partido_candidato["sigla"]).upper(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+                else:
+                    canvas_candidato.create_text(i, 25, text=str(valor).title(), font=("Lexend Peta Light", 10), fill=cor_texto, anchor="w")
+                    i+=250
+        
+        frame21.update_idletasks()
+
+        pagina_texto = f'{pagina*50+1}-{(pagina+1)*50} de {len(resultado_pesquisa)}'
+        if len(resultado_pesquisa)<(pagina+1)*50:
+            pagina_texto = f'{pagina*50+1}-{len(resultado_pesquisa)} de {len(resultado_pesquisa)}'
+
+        canvas_pagina.delete("texto")
+        canvas_pagina.create_text(100,10, text=pagina_texto, 
+                                  font=("Lexend Peta Light", 9), 
+                                  fill=cor_texto, anchor="w", tag = "texto")
 
 #=============================================================================================================================================
 # CORES
@@ -236,22 +384,28 @@ principal_frame.pack()
 
 # FRAME COM ROLAGEM
 frame21 = customtkinter.CTkScrollableFrame(principal_frame, width=500, height=200, fg_color="white")
-frame21.pack(side=tk.TOP)
 frame21.place(relx=0.5, rely=0.2, anchor="center")
 
 # FRAME PARA ESTATISTICAS
-
 frame22 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
-frame22.pack()
 frame22.place(relx=0.25, rely=0.53, anchor="center")
 
 frame23 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
-frame23.pack()
 frame23.place(relx=0.75, rely=0.53, anchor="center")
 
 frame24 = tk.Frame(principal_frame, bg=cor_background_meio, width=550, height=130)
-frame24.pack()
 frame24.place(relx=0.5, rely=0.77, anchor="center")
+
+# TEXTO DAS PAGINAS
+canvas_pagina = tk.Canvas(principal_frame, width=200, height=20, bg=cor_background_meio)
+canvas_pagina.place(relx=0.50, rely = 0.38)
+
+# BOTÕES DAS PAGINAS DE LISTAGEM
+botao_esquerda = tk.Button(principal_frame, text="<", font=("Lexend Peta Light", 7), bg=cor_background_meio, width=2, height=1, command=listar_anteriores) 
+botao_esquerda.place(relx=0.85, rely = 0.38)
+
+botao_direita = tk.Button(principal_frame, text=">", font=("Lexend Peta Light", 7), bg=cor_background_meio, width=2, height=1, command=listar_posteriores) 
+botao_direita.place(relx=0.9, rely = 0.38)
 
 # BOTÃO VOLTAR
 tk.Button(principal_frame, text="Voltar", font=("Lexend Peta Light", 10), bg=cor_background_titulo, width=40, command=tela_principal).pack(pady=30, side=tk.BOTTOM)  # Posicionamento no final
