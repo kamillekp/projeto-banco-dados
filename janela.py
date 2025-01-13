@@ -40,7 +40,8 @@ def realizar_pesquisa():
         widget.destroy()
 
     canvas_pagina.delete("texto")
-    # LABELS COM INFORMAÇÕES                                                                         
+    # LABELS COM INFORMAÇÕES
+    global pagina                                                                         
     pagina = 0
 
     for j in range(pagina*50, (pagina+1)*50):
@@ -79,9 +80,9 @@ def realizar_pesquisa():
 
         frame21.configure(height = 250)
         frame21.place(relx=0.5, rely=0.25, anchor="center")
+        canvas_pagina.place(relx=0.48, rely = 0.47)
         botao_esquerda.place(relx=0.85, rely = 0.47)
         botao_direita.place(relx=0.9, rely = 0.47)
-        canvas_pagina.place(relx=0.5, rely = 0.47)
 
         if (raca and not raca.startswith("Selecione")) and (genero and not genero.startswith("Selecione")): 
             frame23.place_forget()
@@ -119,7 +120,7 @@ def realizar_pesquisa():
         else:
             frame21.configure(height = 200)
             frame21.place(relx=0.5, rely=0.2, anchor="center")
-            canvas_pagina.place(relx=0.5, rely = 0.38)
+            canvas_pagina.place(relx=0.48, rely = 0.38)
             botao_esquerda.place(relx=0.85, rely = 0.38)
             botao_direita.place(relx=0.9, rely = 0.38)
 
@@ -192,7 +193,7 @@ def realizar_pesquisa():
 
         frame21.configure(height = 500)
         frame21.place(relx=0.5, rely=0.42, anchor="center")
-        canvas_pagina.place(relx=0.5, rely = 0.85)
+        canvas_pagina.place(relx=0.48, rely = 0.85)
         botao_esquerda.place(relx=0.85, rely = 0.85)
         botao_direita.place(relx=0.9, rely = 0.85)
 
